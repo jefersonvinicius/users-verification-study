@@ -1,6 +1,6 @@
 import HomeController from '@app/controllers/HomeController';
 import { Router } from 'express';
-import { checkJWTToken } from '@app/middlewares/jwt';
+import { checkJWTToken } from '@app/middlewares/auth';
 
 const mainRouter = Router();
 
