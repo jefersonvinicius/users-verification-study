@@ -1,5 +1,4 @@
 import User from '@app/entities/User';
-import { isEmailOrPhoneAlreadyUsed } from '@app/utils/validators';
 import { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
@@ -11,6 +10,12 @@ export default class SignupController {
         const errors = validationResult(request);
         if (!errors.isEmpty()) {
             return response.status(422).json(errors.array());
+        }
+
+        const userExists = await User.findOne({ where: [{ email }, { phone }] });
+        if (userExists) {
+            const message = userExists.email === email ? 'email already registered' : 'phone already registered';
+            return response.status(409).json({ message });
         }
 
         const user = new User();
@@ -31,6 +36,5 @@ export default class SignupController {
         }),
         body('phone', 'phone must be phone valid number').isMobilePhone('pt-BR'),
         body('verifyBy', 'verify must be by email or phone').isIn(['email', 'phone']),
-        body().custom(isEmailOrPhoneAlreadyUsed),
     ];
 }

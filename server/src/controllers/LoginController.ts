@@ -1,10 +1,11 @@
 import User from '@app/entities/User';
 import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 
 export default class LoginController {
     async handle(request: Request, response: Response) {
-        const { email, phone, password } = request.body;
+        const { email, phone, password = '' } = request.body;
 
         const user = await User.findOne({ where: [{ email }, { phone }] });
         if (!user) {
@@ -19,6 +20,8 @@ export default class LoginController {
             return response.status(403).json({ message: 'user not actived' });
         }
 
-        return response.json(user);
+        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || '');
+
+        return response.json({ user, token });
     }
 }
