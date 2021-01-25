@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 
-export function checkJWTToken(request: Request, response: Response, next: NextFunction) {
+export function hasValidJWTToken(request: Request, response: Response, next: NextFunction) {
     const { authorization } = request.headers;
 
     if (!authorization) {
