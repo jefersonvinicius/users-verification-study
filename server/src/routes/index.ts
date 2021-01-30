@@ -4,7 +4,7 @@ import mainRouter from './main';
 
 const routes = Router();
 
-routes.use(mainRouter);
 routes.use(authRouter);
+routes.use(mainRouter);
 
 export default routes;

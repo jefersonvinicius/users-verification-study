@@ -2,10 +2,11 @@ import User from '@app/entities/User';
 import { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcrypt';
+import EmailService from '@app/services/EmailService';
 
 export default class SignupController {
     async handle(request: Request, response: Response) {
-        const { name, email, password, phone } = request.body;
+        const { name, email, password, phone, verifyBy } = request.body;
 
         const errors = validationResult(request);
         if (!errors.isEmpty()) {
@@ -24,6 +25,8 @@ export default class SignupController {
         user.password = await bcrypt.hash(password, 10);
         user.phone = phone;
         await user.save();
+
+        EmailService.sendConfirmationEmailTo(user);
 
         return response.json(user);
     }
